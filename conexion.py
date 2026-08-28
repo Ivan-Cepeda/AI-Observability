@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langfuse import Langfuse
@@ -6,6 +7,17 @@ from langfuse.langchain import CallbackHandler
 import mlflow # 1. Importamos MLflow
 
 load_dotenv()
+
+# La consola de Windows usa cp1252 y revienta con los emojis de los prints.
+# Reconfiguramos la salida a UTF-8 una sola vez, aqui, para los tres scripts.
+for _flujo in (sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+# Modelo Gemini desde variables de entorno (Zero-Hardcoding)
+GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
 
 # ==========================================
 # CONFIGURACIÓN DE MLFLOW (MLOps Estándar)
@@ -22,9 +34,9 @@ mlflow.langchain.autolog()
 # ==========================================
 
 def obtener_infraestructura():
-    # El LLM (Gemini 2.5 Pro)
+    # El LLM (Gemini 3.7 Flash por defecto; se cambia con GEMINI_MODEL en el .env)
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-pro",
+        model=GEMINI_MODEL,
         google_api_key=os.getenv("GOOGLE_API_KEY"),
         temperature=0
     )
@@ -33,7 +45,9 @@ def obtener_infraestructura():
     langfuse_client = Langfuse(
         public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
         secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
-        host=os.getenv("LANGFUSE_HOST")
+        # El SDK llama a esta variable LANGFUSE_HOST; el .env de la leccion,
+        # LANGFUSE_BASE_URL. Aceptamos las dos para no depender del nombre.
+        host=os.getenv("LANGFUSE_HOST") or os.getenv("LANGFUSE_BASE_URL")
     )
     handler = CallbackHandler()
     

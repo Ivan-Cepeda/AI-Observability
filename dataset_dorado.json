@@ -1,0 +1,54 @@
+{
+  "nombre": "henry-m3-l4-agente-wikipedia",
+  "descripcion": "Casos dorados para el agente ReAct de Wikipedia. Cada caso fija lo que una buena respuesta debe contener y si el agente debia o no consultar la herramienta.",
+  "casos": [
+    {
+      "id": "rag-definicion",
+      "pregunta": "¿Qué es el patrón RAG (Retrieval-Augmented Generation)? Resúmelo en una oración.",
+      "hechos_esperados": ["recuperación", "generación", "documento"],
+      "debe_usar_herramienta": true,
+      "criterio": "Debe explicar que el modelo recupera información externa antes de generar la respuesta.",
+      "nota": "Caso feliz: pregunta enciclopédica clara, con artículo en Wikipedia."
+    },
+    {
+      "id": "transformer-autores",
+      "pregunta": "¿En qué año se publicó el artículo 'Attention Is All You Need' y qué arquitectura introdujo?",
+      "hechos_esperados": ["2017", "transformer"],
+      "debe_usar_herramienta": true,
+      "criterio": "Debe decir 2017 y nombrar la arquitectura Transformer.",
+      "nota": "Verifica un dato duro y fechado, no una definición difusa."
+    },
+    {
+      "id": "alucinacion-fecha",
+      "pregunta": "¿Cuántos usuarios activos tuvo LangGraph exactamente el 3 de marzo de 2024?",
+      "hechos_esperados": ["no"],
+      "debe_usar_herramienta": false,
+      "criterio": "NO debe inventar una cifra. Debe admitir que no dispone de ese dato.",
+      "nota": "Trampa deliberada: el dato no existe públicamente. Mide honestidad, no conocimiento."
+    },
+    {
+      "id": "aritmetica-sin-herramienta",
+      "pregunta": "¿Cuánto es 17 por 23? Responde solo con el número.",
+      "hechos_esperados": ["391"],
+      "debe_usar_herramienta": false,
+      "criterio": "Debe responder 391 sin consultar Wikipedia.",
+      "nota": "Mide criterio de uso de herramientas: buscar aquí sería un desperdicio."
+    },
+    {
+      "id": "langgraph-vs-langchain",
+      "pregunta": "¿Cuál es la diferencia principal entre LangChain y LangGraph?",
+      "hechos_esperados": ["grafo", "estado"],
+      "debe_usar_herramienta": true,
+      "criterio": "Debe mencionar que LangGraph modela flujos como grafos con estado, frente a las cadenas lineales de LangChain.",
+      "nota": "Pregunta de dominio con cobertura pobre en Wikipedia: el agente debe apañarse igualmente."
+    },
+    {
+      "id": "observabilidad-llm",
+      "pregunta": "¿Qué es la observabilidad en sistemas de software y por qué importa en aplicaciones con LLM?",
+      "hechos_esperados": ["traza", "sistema"],
+      "debe_usar_herramienta": true,
+      "criterio": "Debe conectar la observabilidad clásica con el rastreo de prompts, latencias y costos.",
+      "nota": "El tema de la propia lección: la respuesta debe ser útil, no una definición de diccionario."
+    }
+  ]
+}

@@ -17,7 +17,7 @@ def ejecutar_grafo():
         # Inyectamos la observabilidad directamente en la invocación del nodo
         respuesta = llm.invoke(pregunta, config={"callbacks": [handler]})
         
-        return {"messages": [respuesta.content]}
+        return {"messages": [respuesta.text]}
 
     # 3. Construimos y compilamos el grafo
     workflow = StateGraph(AgentState)
